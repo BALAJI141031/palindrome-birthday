@@ -18,7 +18,7 @@ function handledateForZero(newDate) {
         month = '0' + month
     }
 
-    return `${day}-${month}-${year}`
+    return `${year}-${month}-${day}`
 
 }
 
@@ -28,7 +28,8 @@ function getNextDate(dateObj) {
     let year = Number(dateObj.year)
     let day = Number(dateObj.day)
     let month = Number(dateObj.month)
-    console.log(day, month, year)
+
+    //console.log(day, month, year)
 
     let isLeapYear = false
 
@@ -52,15 +53,18 @@ function getNextDate(dateObj) {
 
     }
 
-    if (day > daysInMonths[month - 1]) {
-        day = 1;
-        month++;
+    if (day < daysInMonths[month - 1]) {
+        day += 1
+    } else if ((day === daysInMonths[month - 1]) && (month !== 12)) {
+        day = 1
+        month = month + 1
+
     }
 
-
-    if (month > 12) {
-        month = 1;
-        year++;
+    if ((day === 31) && month === 12) {
+        day = 1
+        month = 1
+        year = year + 1
     }
 
 
@@ -112,35 +116,85 @@ function getAllDateFormats(dateObj) {
 
 }
 
-
-function getDate() {
-    let date = inputEl.value
+function gatDateInObj(date) {
     let splittedData = date.split("-")
     // console.log((date))
     let dateObj = { year: splittedData[0], month: splittedData[1], day: splittedData[2] }
-
-    //console.log(dateObj)
-
-    const allFormats = getAllDateFormats(dateObj)
-
-    const reversedDate = reverseDate(dateObj)
-    // console.log(reversedDate)
-    // console.log(allFormats)
-    //console.log(date)
-
-    const isPolindrome = checkForPolindrome(reversedDate, allFormats)
-
-    if (isPolindrome) {
-        console.log("yayy your birthday is polindrome")
-    } else {
-        var newDate = getNextDate(dateObj)
-
-        var handledData = handledateForZero(newDate)
-
-        console.log(handledData)
-    }
-
+    return dateObj
 }
 
+
+function getDate() {
+    let date = inputEl.value
+
+    if (date === "") {
+        ouputEl.innerText = "Please give valid data"
+    }
+
+    else {
+
+        let dateObj = gatDateInObj(date)
+
+        //console.log(date)
+
+        const allFormats = getAllDateFormats(dateObj)
+
+        const reversedDate = reverseDate(dateObj)
+        // console.log(reversedDate)
+        // console.log(allFormats)
+        //console.log(date)
+
+        const isPolindrome = checkForPolindrome(reversedDate, allFormats)
+
+        if (isPolindrome) {
+            //console.log("yayy your birthday is polindrome")
+            ouputEl.innerText = `huuu thank you..... your birthday is palindrome as simple as that`
+
+        } else {
+
+            count = 0
+
+
+            for (let i = 0; i <= count; i++) {
+
+                var newDate = getNextDate(dateObj)
+
+
+
+                var handledData = handledateForZero(newDate)
+
+                // console.log(handledData)
+
+                var getHandledDataInObj = gatDateInObj(handledData)
+
+                // console.log(getHandledDataInObj)
+                var nextDateAllFormats = getAllDateFormats(getHandledDataInObj)
+
+                console.log(nextDateAllFormats)
+
+                var nextDateReveresed = reverseDate(getHandledDataInObj)
+                console.log(nextDateReveresed)
+
+                if (nextDateAllFormats.includes(nextDateReveresed)) {
+                    count += 1
+                    break
+                } else {
+                    dateObj = gatDateInObj(handledData)
+                    console.log(dateObj)
+                    count += 1
+
+                }
+            }
+            console.log(count)
+            ouputEl.innerText = `ohh shitt you missed by ${count} days`
+
+        }
+
+
+
+
+
+    }
+}
 
 btnEl.addEventListener("click", getDate)
